@@ -1,0 +1,610 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns# Load your dataset
+cars = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices.csv")
+cars 
+cars.head() 
+cars.shape cars.isnull().sum(axis = 0) 
+data = cars.dropna() data.isnull().sum(axis = 0) 
+
+Creating new column 'fault'
+# Define a function to assign values to the 'fault' column based on the 'condition' column
+def assign_fault(condition):
+    if condition < 1.8:
+        print(f'Condition: {condition}, Assigned Fault: 0')
+        return 0
+    else:
+        print(f'Condition: {condition}, Assigned Fault: 1')
+        return 1
+
+# Create a copy of the DataFrame to avoid the SettingWithCopyWarning
+data_copy = data.copy()
+
+# Create the 'fault' column using .loc on the copy
+data_copy.loc[:, 'fault'] = data_copy['condition'].apply(assign_fault)
+
+data_copy.to_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated.csv", index=False)
+
+# For the data4
+# Define a function to assign values to the 'fault' column based on the 'condition' column
+def assign_fault(condition):
+    if condition < 4:
+        print(f'Condition: {condition}, Assigned Fault: 0')
+        return 0
+    else:
+        print(f'Condition: {condition}, Assigned Fault: 1')
+        return 1
+
+# Create a copy of the DataFrame to avoid the SettingWithCopyWarning
+data_copy = data.copy()
+
+# Create the 'fault' column using .loc on the copy
+data_copy.loc[:, 'fault'] = data_copy['condition'].apply(assign_fault)
+
+data_copy.to_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated4.csv", index=False)
+#opening the second dataset "car_prices_updated"
+data2 = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated.csv")
+
+#opening the third dataset "car_prices_updated4"
+data4 = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated4.csv")
+data2["fault"].value_counts()
+data4["fault"].value_counts()
+
+import pandas as pd
+
+# Assuming 'data2' is your DataFrame
+data2 = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated.csv")
+
+# Specify the path and filename for the new Excel file
+output_file_path = "C:/Cul 03/Specialization Project/Review II/car_prices_exp4.xlsx"
+
+# Export the DataFrame to Excel
+data2.to_excel(output_file_path, index=False)
+
+# Print a message to confirm the export
+print(f"DataFrame exported to {output_file_path}")
+
+data2.head(5)
+
+data2.info()
+
+data2.isnull().sum(axis = 0)
+
+data4.isnull().sum(axis = 0)
+
+# Assuming 'data2' is your DataFrame
+data2 = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated.csv")
+
+# Specify the columns you want to include in the new dataset
+selected_columns = [
+    'Sno',
+    'oil_filter',
+    'engine_oil',
+    'washer_plug_drain',
+    'dust_and_pollen_filter',
+    'whell_alignment_and_balancing',
+    'air_clean_filter',
+    'fuel_filter',
+    'spark_plug',
+    'brake_fluid',
+    'brake_and_clutch_oil',
+    'transmission_fluid',
+    'brake_pads',
+    'clutch',
+    'coolant',
+    'fault',
+]
+
+# Create a new DataFrame with the selected columns
+features_data = data2[selected_columns]
+
+# Print the new DataFrame
+print(features_data)
+
+# Export the new DataFrame to Excel (optional)
+features_data.to_excel('C:/Cul 03/Specialization Project/Review II/features_data.xlsx', index=False)
+
+# Assuming 'data4' is your DataFrame
+data4 = pd.read_csv("C:/Cul 03/Specialization Project/Review II/car_prices_updated4.csv")
+
+# Specify the columns you want to include in the new dataset
+selected_columns = [
+    'Sno',
+    'oil_filter',
+    'engine_oil',
+    'washer_plug_drain',
+    'dust_and_pollen_filter',
+    'whell_alignment_and_balancing',
+    'air_clean_filter',
+    'fuel_filter',
+    'spark_plug',
+    'brake_fluid',
+    'brake_and_clutch_oil',
+    'transmission_fluid',
+    'brake_pads',
+    'clutch',
+    'coolant',
+    'fault',
+]
+
+# Create a new DataFrame with the selected columns
+features_data4 = data4[selected_columns]
+
+# Print the new DataFrame
+print(features_data4)
+
+# Export the new DataFrame to Excel (optional)
+features_data4.to_excel('C:/Cul 03/Specialization Project/Review II/features_data4.xlsx', index=False)
+
+
+features_data.head()
+
+features_data.info()
+
+features_data.isnull().sum(axis = 0)
+
+features_data["fault"].value_counts()
+
+features_data4["fault"].value_counts()
+
+#KNeighborsClassifier
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report
+
+# Assuming 'data_features' is your DataFrame
+
+# Define the features (X) and the target variable (y)
+features = features_data.drop(['Sno', 'fault'], axis=1)
+target = features_data['fault']
+
+# Manually select 14 features based on your domain knowledge or analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+]
+
+# Select only the relevant features
+selected_features_df = features_data[selected_features]
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(target)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(selected_features_df, target_encoded, test_size=0.2, random_state=42)
+
+# Initialize the KNeighborsClassifier
+knn_classifier = KNeighborsClassifier(n_neighbors=9)  # You can adjust the number of neighbors as needed
+
+# Train the model
+knn_classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred_encoded = knn_classifier.predict(X_test)
+
+# Decode the predictions
+y_pred_decoded = label_encoder.inverse_transform(y_pred_encoded)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_encoded)
+classification_rep = classification_report(y_test, y_pred_encoded)
+
+# Print the results
+print(f"Accuracy: {accuracy:.2f}")
+print("Classification Report:\n", classification_rep)
+
+Accuracy: 0.98
+Classification Report:
+               precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00        10
+           1       0.98      1.00      0.99       437
+
+    accuracy                           0.98       447
+   macro avg       0.49      0.50      0.49       447
+weighted avg       0.96      0.98      0.97       447
+
+
+#prediction using KNeighborsClassifier
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+
+# Assuming 'data_features4' is your DataFrame
+# Assuming 'selected_features' is the list of selected features for analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+    'fault',
+]
+
+# Select only the relevant features
+selected_features_df = features_data4[selected_features]
+
+# Assuming 'input_data' is the dictionary containing the feature values for prediction
+input_data = {
+    'oil_filter': [0],
+    'engine_oil': [0],
+    'washer_plug_drain': [0],
+    'dust_and_pollen_filter': [0],
+    'whell_alignment_and_balancing': [0],
+    'air_clean_filter': [0],
+    'fuel_filter': [0],
+    'spark_plug': [0],
+    'brake_fluid': [0],
+    'brake_and_clutch_oil': [0],
+    'transmission_fluid': [0],
+    'brake_pads': [0],
+    'clutch': [0],
+    'coolant': [0],
+}
+
+# Create a DataFrame for the input data
+input_df = pd.DataFrame(input_data)
+
+# Extract the selected features from the input data
+input_features = input_df[selected_features[:-1]]  # Exclude the 'fault' column
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(selected_features_df['fault'])
+
+# Initialize the KNeighborsClassifier
+knn_classifier = KNeighborsClassifier(n_neighbors=5)  # You can adjust the number of neighbors as needed
+
+# Train the model on the entire dataset
+knn_classifier.fit(selected_features_df[selected_features[:-1]], target_encoded)
+
+# Make predictions for the input data
+prediction_encoded = knn_classifier.predict(input_features)
+
+# Decode the predictions
+prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
+
+# Print the final prediction
+if prediction_decoded[0] == 1:
+    print("The car is not faulty.")
+else:
+    print("The car is faulty.")
+The car is not faulty.
+
+
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+
+# Assuming 'features_data4' is your DataFrame
+# Assuming 'selected_features' is the list of selected features for analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+    'fault',
+]
+
+# Select only the relevant features
+selected_features_df = features_data4[selected_features]
+
+# Create a dictionary to store user input
+input_data = {}
+for feature in selected_features[:-1]:  # Exclude the 'fault' column
+    while True:
+        user_input = input(f"Enter the value for {feature} (0 or 1): ")
+        if user_input in {'0', '1'}:
+            input_data[feature] = [float(user_input)]  # Assuming the input values are numeric
+            break
+        else:
+            print("Invalid input. Please enter either 0 or 1.")
+
+# Create a DataFrame for the input data
+input_df = pd.DataFrame(input_data)
+
+# Extract the selected features from the input data
+input_features = input_df[selected_features[:-1]]  # Exclude the 'fault' column
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(selected_features_df['fault'])
+
+# Initialize the KNeighborsClassifier
+knn_classifier = KNeighborsClassifier(n_neighbors=5)  # You can adjust the number of neighbors as needed
+
+# Train the model on the entire dataset
+knn_classifier.fit(selected_features_df[selected_features[:-1]], target_encoded)
+
+# Make predictions for the input data
+prediction_encoded = knn_classifier.predict(input_features)
+
+# Decode the predictions
+prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
+
+# Print the final prediction
+if prediction_decoded[0] == 1:
+    print("The car is not faulty.")
+else:
+    print("The car is faulty.")
+Enter the value for oil_filter (0 or 1): 1
+Enter the value for engine_oil (0 or 1): 1
+Enter the value for washer_plug_drain (0 or 1): 1
+Enter the value for dust_and_pollen_filter (0 or 1): 1
+Enter the value for whell_alignment_and_balancing (0 or 1): 1
+Enter the value for air_clean_filter (0 or 1): 1
+Enter the value for fuel_filter (0 or 1): 1
+Enter the value for spark_plug (0 or 1): 1
+Enter the value for brake_fluid (0 or 1): 1
+Enter the value for brake_and_clutch_oil (0 or 1): 1
+Enter the value for transmission_fluid (0 or 1): 1
+Enter the value for brake_pads (0 or 1): 1
+Enter the value for clutch (0 or 1): 1
+Enter the value for coolant (0 or 1): 1
+The car is faulty.
+
+# Feature Scaling
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+
+# Assuming 'features_data' is your DataFrame
+
+# Define the features (X) and the target variable (y)
+features = features_data.drop(['Sno', 'fault'], axis=1)
+target = features_data['fault']
+
+# Manually select 14 features based on your domain knowledge or analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+]
+
+# Select only the relevant features
+selected_features_df = features_data[selected_features]
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(target)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(selected_features_df, target_encoded, test_size=0.2, random_state=42)
+
+# Feature Scaling using StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Initialize the KNeighborsClassifier
+knn_classifier = KNeighborsClassifier(n_neighbors=5)  # You can adjust the number of neighbors as needed
+
+# Train the model
+knn_classifier.fit(X_train_scaled, y_train)
+
+# Make predictions on the test set
+y_pred_encoded = knn_classifier.predict(X_test_scaled)
+
+# Decode the predictions
+y_pred_decoded = label_encoder.inverse_transform(y_pred_encoded)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_encoded)
+classification_rep = classification_report(y_test, y_pred_encoded)
+
+# Print the results
+print(f"Accuracy: {accuracy:.2f}")
+print("Classification Report:\n", classification_rep)
+
+
+# Hyperparameter tuning
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+
+# Define the features (X) and the target variable (y)
+features = features_data.drop(['Sno', 'fault'], axis=1)
+target = features_data['fault']
+
+# Manually select 14 features based on your domain knowledge or analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+]
+
+# Select only the relevant features
+selected_features_df = features_data[selected_features]
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(target)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(selected_features_df, target_encoded, test_size=0.2, random_state=42)
+
+# Define the hyperparameters to tune
+hyperparameters = {
+    'n_neighbors': [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33],
+    'leaf_size': [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    'p': [1, 2]
+}
+
+# Perform hyperparameter tuning using GridSearchCV
+grid_search = GridSearchCV(estimator=KNeighborsClassifier(), param_grid=hyperparameters, cv=5)
+grid_search.fit(X_train, y_train)
+
+# Get the best hyperparameters
+best_score = grid_search.best_score_
+best_params = grid_search.best_params_
+
+print("Best score: {:.2f}".format(best_score))
+print("Best parameters: {:}".format(best_params))
+
+# Train the model with the best hyperparameters
+knn_classifier = KNeighborsClassifier(n_neighbors=best_params['n_neighbors'], leaf_size=best_params['leaf_size'], p=best_params['p'])
+knn_classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred_encoded = knn_classifier.predict(X_test)
+
+# Decode the predictions
+y_pred_decoded = label_encoder.inverse_transform(y_pred_encoded)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_decoded)
+classification_report = classification_report(y_test, y_pred_decoded)
+
+print(f"Accuracy: {accuracy:.2f}")
+print("Classification Report:\n", classification_report)
+
+# feature scaling with StandardScaler
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score, classification_report
+
+# Assuming 'data_features' is your DataFrame
+# Define the features (X) and the target variable (y)
+features = features_data.drop(['Sno', 'fault'], axis=1)
+target = features_data['fault']
+
+# Manually select 14 features based on your domain knowledge or analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+]
+
+# Select only the relevant features
+selected_features_df = features_data[selected_features]
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(target)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(selected_features_df, target_encoded, test_size=0.2, random_state=42)
+
+# Scale the features using StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Define the hyperparameters to tune
+hyperparameters = {
+    'n_neighbors': [3, 5, 7, 9, 11, 13, 15],
+    'weights': ['uniform', 'distance'],
+    'p': [1, 2]
+}
+
+# Perform hyperparameter tuning using GridSearchCV
+grid_search = GridSearchCV(estimator=KNeighborsClassifier(), param_grid=hyperparameters, cv=5)
+grid_search.fit(X_train_scaled, y_train)
+
+# Get the best hyperparameters
+best_score = grid_search.best_score_
+best_params = grid_search.best_params_
+
+print("Best score: {:.2f}".format(best_score))
+print("Best parameters: {:}".format(best_params))
+
+# Train the model with the best hyperparameters
+knn_classifier = KNeighborsClassifier(n_neighbors=best_params['n_neighbors'], weights=best_params['weights'], p=best_params['p'])
+knn_classifier.fit(X_train_scaled, y_train)
+
+# Make predictions on the test set
+y_pred_encoded = knn_classifier.predict(X_test_scaled)
+
+# Decode the predictions
+y_pred_decoded = label_encoder.inverse_transform(y_pred_encoded)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_encoded)
+classification_rep = classification_report(y_test, y_pred_encoded)
+
+print(f"Accuracy: {accuracy:.2f}")
+print("Classification Report:\n", classification_rep)
+
+# Apply SMOTE to the training data
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report
+from imblearn.over_sampling import SMOTE
+
+# Assuming 'data_features' is your DataFrame
+
+# Define the features (X) and the target variable (y)
+features = features_data.drop(['Sno', 'fault'], axis=1)
+target = features_data['fault']
+
+# Manually select 14 features based on your domain knowledge or analysis
+selected_features = [
+    'oil_filter', 'engine_oil', 'washer_plug_drain', 'dust_and_pollen_filter',
+    'whell_alignment_and_balancing', 'air_clean_filter', 'fuel_filter',
+    'spark_plug', 'brake_fluid', 'brake_and_clutch_oil', 'transmission_fluid',
+    'brake_pads', 'clutch', 'coolant',
+]
+
+# Select only the relevant features
+selected_features_df = features_data[selected_features]
+
+# Convert the target variable to numerical format using Label Encoding
+label_encoder = LabelEncoder()
+target_encoded = label_encoder.fit_transform(target)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(selected_features_df, target_encoded, test_size=0.2, random_state=42)
+
+# Apply SMOTE to the training data
+smote = SMOTE(random_state=42)
+X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+
+# Initialize the KNeighborsClassifier
+knn_classifier = KNeighborsClassifier(n_neighbors=9)  # You can adjust the number of neighbors as needed
+
+# Train the model with the resampled data
+knn_classifier.fit(X_train_resampled, y_train_resampled)
+
+# Make predictions on the test set
+y_pred_encoded = knn_classifier.predict(X_test)
+
+# Decode the predictions
+y_pred_decoded = label_encoder.inverse_transform(y_pred_encoded)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_encoded)
+classification_rep = classification_report(y_test, y_pred_encoded)
+
+# Print the results
+print(f"Accuracy: {accuracy:.2f}")
+print("Classification Report:\n", classification_rep)
+
+
+Objective:
+Creating a machine learning-based solution for failure prediction in cars is the issue at hand. 
+
+The objective is to develop a prediction model that predict whether the car is going to get fault or not
+
+Dataset Used For The Project:
+Used Cars Dataset
+Car Prices Dataset
+Car Spare Parts Dataset
+
+In this paper the inputs are oil filter, engine oil, washer plug drain, dust filter, wheel alignment and balancing, air filter, fuel filter, spark plug, brake fluid, brake and clutch oil, transmission fluid, brake pads, clutch, coolant.
+The final model predicts whether the car gets fault or not.
